@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  scripts:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: scripts
+    environment:
+      - MEDIA_CONVERTER_IN_DIR=/needs-conversion
+      - MEDIA_CONVERTER_OUT_DIR=/converted
+      - MEDIA_MOVER_IN_DIR=/converted
+      - MEDIA_MOVER_OUT_DIR=/out
+    volumes:
+      - ${NEEDS_CONVERSION_DIR:-./test/needs-conversion}:/needs-conversion
+      - ${CONVERTED_DIR:-./test/converted}:/converted
+      - ${MEDIA_BASE_DIR:-./test/out}:/out

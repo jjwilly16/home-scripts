@@ -1,0 +1,4 @@
+# Convert media every 5 minutes
+*/5 * * * * ubuntu /scripts/media-converter.sh >> /var/log/cron.log 2>&1
+
+# * * * * * ubuntu /scripts/heartbeat.sh >> /var/log/cron.log 2>&1
