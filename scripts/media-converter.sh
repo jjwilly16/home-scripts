@@ -86,7 +86,7 @@ process_file () {
 	# If file wasn't auto-uploaded to this directory, exit without moving it
 	if ! [[ "$FILE_NAME" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\ [0-9]{2}.[0-9]{2}.[0-9]{2}\ [0-9]{3,5}.(.*)$ ]];
 		then
-			mc_log "File name pattern doesn't match. Exiting..."
+			mc_log "File name pattern doesn't match. Skipping..."
 			return
 	fi
 
@@ -95,7 +95,7 @@ process_file () {
 	elif is_photo "$FILE_EXT"; then
 		process_photo "$FILE"
 	else
-		mc_log "Unknown file type. Exiting..."
+		mc_log "Unknown file type. Skipping..."
 		return
 	fi
 	FILES_CONVERTED=$((FILES_CONVERTED + 1))
@@ -118,7 +118,6 @@ mc_log "Media converter finished"
 
 if [ "$FILES_CONVERTED" -gt 0 ]; then
 	mc_log "Converted $FILES_CONVERTED files."
-	"$(dirname "$0")/media-mover.sh"
 else
 	mc_log "No files converted."
 fi

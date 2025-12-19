@@ -72,7 +72,7 @@ move_file () {
 		PHOTOS_MOVED=$((PHOTOS_MOVED + 1))
 		FILES_MOVED=$((FILES_MOVED + 1))
 	else
-		mm_log "unknown file type. exiting..."
+		mm_log "Unknown file type. Skipping..."
 		continue
 	fi
 
