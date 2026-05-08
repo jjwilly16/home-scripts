@@ -44,7 +44,15 @@ process_video() {
 		*)
 			local FILE_NAME_NO_EXTENSION="${FILE_NAME%.*}"
 			local VIDEO_NAME="$FILE_NAME_NO_EXTENSION.$CONVERT_VIDEOS_TO"
-			ffmpeg -y -i "${FILE}" -loglevel quiet -metadata keyword="notag" -vcodec libx264 -acodec copy "$OUT_DIR/$VIDEO_NAME" && \
+			ffmpeg -y -i "${FILE}" \
+			-loglevel quiet \
+			-metadata keyword="notag" \
+			-vf "zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=hable,zscale=t=bt709:m=bt709:r=tv,format=yuv420p" \
+			-c:v libx264 \
+			-crf 18 \
+			-preset medium \
+			-c:a copy \
+			"$OUT_DIR/$VIDEO_NAME" && \
 			rm -f "$FILE"
 			;;
 	esac
