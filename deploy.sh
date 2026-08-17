@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="1.0.2"
+VERSION="1.1.0"
 REGISTRY=192.168.1.54:5000
 
 docker build -t home-scripts .

@@ -44,15 +44,34 @@ process_video() {
 		*)
 			local FILE_NAME_NO_EXTENSION="${FILE_NAME%.*}"
 			local VIDEO_NAME="$FILE_NAME_NO_EXTENSION.$CONVERT_VIDEOS_TO"
+			COLOR_TRANSFER=$(ffprobe -v error \
+				-select_streams v:0 \
+				-show_entries stream=color_transfer \
+				-of default=nw=1:nk=1 \
+				"${FILE}")
+
+			if [[ "$COLOR_TRANSFER" == "smpte2084" || "$COLOR_TRANSFER" == "arib-std-b67" ]]; then
+				FILTER="zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=mobius:desat=0,zscale=t=bt709:m=bt709:r=tv,scale=1920:1080:force_original_aspect_ratio=decrease,format=yuv420p"
+			else
+				FILTER="scale=1920:1080:force_original_aspect_ratio=decrease,format=yuv420p"
+			fi
+
 			ffmpeg -y -i "${FILE}" \
-			-loglevel quiet \
-			-metadata keyword="notag" \
-			-vf "zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=hable,zscale=t=bt709:m=bt709:r=tv,format=yuv420p" \
-			-c:v libx264 \
-			-crf 18 \
-			-preset medium \
-			-c:a copy \
-			"$OUT_DIR/$VIDEO_NAME" && \
+				-metadata keyword="notag" \
+				-vf "$FILTER" \
+				-c:v libx264 \
+				-crf 18 \
+				-preset medium \
+				-profile:v high \
+				-level 4.2 \
+				-color_primaries bt709 \
+				-color_trc bt709 \
+				-colorspace bt709 \
+				-color_range tv \
+				-c:a aac \
+				-b:a 192k \
+				-movflags +faststart \
+				"$OUT_DIR/$VIDEO_NAME" && \
 			rm -f "$FILE"
 			;;
 	esac
